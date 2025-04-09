@@ -1,22 +1,70 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 
 function App() {
+  const [name, setName] = useState('');
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchUserData = async () => {
+    if (!name.trim()) {
+      setError('Please enter a name');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`http://localhost:8000/users/${name}`);
+      const data = await response.json();
+      
+      if (response.ok) {
+        setUserData(data);
+      } else {
+        setError('Failed to fetch user data');
+      }
+    } catch (err) {
+      setError('An error occurred while fetching data');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <h1>User Information</h1>
+        
+        <div className="search-container">
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter user name"
+            className="search-input"
+          />
+          <button 
+            onClick={fetchUserData} 
+            disabled={loading}
+            className="search-button"
+          >
+            {loading ? 'Loading...' : 'Search'}
+          </button>
+        </div>
+        
+        {error && <p className="error-message">{error}</p>}
+        
+        {userData && (
+          <div className="user-card">
+            <h2>User Details</h2>
+            <p>{userData.message}</p>
+            <p><strong>Company:</strong> {userData.company}</p>
+            <p><strong>Project:</strong> {userData.project}</p>
+          </div>
+        )}
       </header>
     </div>
   );
