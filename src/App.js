@@ -17,7 +17,8 @@ function App() {
     setError(null);
     
     try {
-      const response = await fetch(`http://localhost:8000/users/${name}`);
+      // Using proxy - path is now relative
+      const response = await fetch(`/Prod/hello?name=${name}`);
       const data = await response.json();
       
       if (response.ok) {
@@ -61,8 +62,6 @@ function App() {
           <div className="user-card">
             <h2>User Details</h2>
             <p>{userData.message}</p>
-            <p><strong>Company:</strong> {userData.company}</p>
-            <p><strong>Project:</strong> {userData.project}</p>
           </div>
         )}
       </header>
