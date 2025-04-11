@@ -15,16 +15,19 @@ function App() {
 
     setLoading(true);
     setError(null);
-    
+    setUserData(null);
+
     try {
-      // Using proxy - path is now relative
-      const response = await fetch(`/Prod/hello?name=${name}`);
-      const data = await response.json();
+      const response = await fetch(
+        `https://yy2wucs35j.execute-api.us-west-1.amazonaws.com/dev/hello?name=${name}`
+      );
       
+      const data = await response.json();
+
       if (response.ok) {
         setUserData(data);
       } else {
-        setError('Failed to fetch user data');
+        setError(data.error || 'Failed to fetch user data');
       }
     } catch (err) {
       setError('An error occurred while fetching data');
@@ -38,7 +41,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>User Information</h1>
-        
+
         <div className="search-container">
           <input
             type="text"
@@ -47,17 +50,17 @@ function App() {
             placeholder="Enter user name"
             className="search-input"
           />
-          <button 
-            onClick={fetchUserData} 
+          <button
+            onClick={fetchUserData}
             disabled={loading}
             className="search-button"
           >
             {loading ? 'Loading...' : 'Search'}
           </button>
         </div>
-        
+
         {error && <p className="error-message">{error}</p>}
-        
+
         {userData && (
           <div className="user-card">
             <h2>User Details</h2>
